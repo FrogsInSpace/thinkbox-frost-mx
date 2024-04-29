@@ -4853,7 +4853,10 @@ boost::shared_ptr<particle_istream> Frost::GetParticleIStream( TimeValue t,
                 const float scale = m_radiusScale.at_time( t );
                 static boost::array<frantic::tstring, 1> inputParamNames = { Frost_RADIUS };
                 pins[i].reset( new streams::apply_function_particle_istream<float( const float& )>(
-                    pins[i], std::bind2nd( std::multiplies<float>(), scale ), Frost_RADIUS, inputParamNames ) );
+                    pins[i], 
+                    std::bind( std::multiplies<float>(), scale, std::placeholders::_1 ),
+                    //C++11 std::bind2nd( std::multiplies<float>(), scale ),                    
+                    Frost_RADIUS, inputParamNames ) );
             } else if( radiusAnimationMode == RADIUS_ANIMATION_MODE::AGE ) {
                 const float defaultAge = 0.f;
 

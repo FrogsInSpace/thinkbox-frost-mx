@@ -8,19 +8,24 @@ import pathlib
 import shutil
 
 VALID_MAX_CONFIGS: dict[tuple[str, str], set[str]] = {
-    ('Visual Studio', '16'): { '2022', '2023' },
+    ('Visual Studio', '15'): { '2017', '2018', '2019', '2020', '2021', '2022' },
+    ('Visual Studio', '16'): { '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024' },
+    ('Visual Studio', '17'): { '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026' },
 }
 
 SETTINGS: dict[str, Any] = {
     'os': ['Windows'],
     'compiler': {
-        'Visual Studio': {'version': ['16']},
+        'Visual Studio': {'version': ['15', '16', '17']},
     },
     'build_type': None,
     'arch': 'x86_64'
 }
 
-DEFAULT_VRAY_PATH: str = 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}'
+# DEFAULT_VRAY_PATH: str = 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}'
+# DEFAULT_VRAY_PATH: str = os.getenv('VRAY_FOR_3DSMAX{}_SDK', 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}')
+DEFAULT_VRAY_PATH: str = os.getenv('VRAY_FOR_3DSMAX2024_SDK', 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}')
+
 
 class VRayMaxSDKConan(ConanFile):
     name: str = 'vraysdk'
@@ -28,13 +33,13 @@ class VRayMaxSDKConan(ConanFile):
     description: str = 'A Conan package containing the Chaos Group V-Ray SDK.'
     settings: dict[str, Any] = SETTINGS
     options: dict[str, Any] = {
-        'max_version': ['2022', '2023'],
+        'max_version': ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],
         'vray_path': 'ANY'
     }
 
     def configure(self) -> None:
         if self.options.max_version == None:
-            self.options.max_version = '2023'
+            self.options.max_version = '2024'
 
         if self.options.vray_path == None:
             self.options.vray_path = DEFAULT_VRAY_PATH.format(self.options.max_version)

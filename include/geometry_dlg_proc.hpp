@@ -401,7 +401,11 @@ class geometry_dlg_proc : public ParamMap2UserDlgProc {
                 if( iBut ) {
                     INode* lookAtNode = m_obj->get_orientation_look_at_node();
                     if( lookAtNode ) {
+#if MAX_RELEASE_R27
+                        iBut->SetText( lookAtNode->NodeName().data() );
+#else						
                         iBut->SetText( lookAtNode->NodeName() );
+#endif					
                     } else {
                         iBut->SetText( _T("None") );
                     }
@@ -960,10 +964,14 @@ class geometry_dlg_proc : public ParamMap2UserDlgProc {
                 if( iBut ) {
                     INode* lookAtNode = m_obj->get_orientation_look_at_node();
                     if( lookAtNode ) {
+#if MAX_RELEASE_R27				
+                        iBut->SetText( lookAtNode->NodeName().data() );
+#else						
                         iBut->SetText( lookAtNode->NodeName() );
+#endif					
                     } else {
                         iBut->SetText( _T("None") );
-                    }
+                       }
                     ReleaseICustButton( iBut );
                 }
             }
