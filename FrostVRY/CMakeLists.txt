@@ -24,6 +24,8 @@ endif()
 
 add_library( frostvry SHARED )
 
+set_property( TARGET frostvry PROPERTY CXX_STANDARD 17 )
+
 set_target_properties( frostvry PROPERTIES OUTPUT_NAME "Frost_vray${VRAY_VERSION}_max${MAX_VERSION}" )
 set_target_properties( frostvry PROPERTIES PREFIX "" )
 set_target_properties( frostvry PROPERTIES SUFFIX ".dll" )
@@ -81,7 +83,7 @@ find_package( xxHash REQUIRED )
 target_include_directories( frostvry PUBLIC ${thinkboxlibrary_INCLUDE_DIRS} )
 target_include_directories( frostvry PUBLIC ${maxsdk_INCLUDE_DIRS} )
 target_include_directories( frostvry PUBLIC ${vraysdk_INCLUDE_DIRS} )
-target_include_directories( frostvry PUBLIC ${vraysdk_INCLUDE_DIRS/maxutils} )
+target_include_directories( frostvry PUBLIC ${vraysdk_INCLUDE_DIRS}/maxutils )
 target_include_directories( frostvry PUBLIC ${thinkboxmxlibrary_INCLUDE_DIRS} )
 target_include_directories( frostvry PUBLIC ${frost_INCLUDE_DIRS} )
 target_include_directories( frostvry PUBLIC ${libb2_INCLUDE_DIRS} )

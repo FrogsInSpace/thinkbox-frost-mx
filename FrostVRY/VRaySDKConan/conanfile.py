@@ -23,9 +23,8 @@ SETTINGS: dict[str, Any] = {
 }
 
 # DEFAULT_VRAY_PATH: str = 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}'
-# DEFAULT_VRAY_PATH: str = os.getenv('VRAY_FOR_3DSMAX{}_SDK', 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}')
+# DEFAULT_VRAY_PATH: str = os.getenv('VRAY_FOR_3DSMAX2024_SDK', 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}')
 DEFAULT_VRAY_PATH: str = os.getenv('VRAY_FOR_3DSMAX2024_SDK', 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}')
-
 
 class VRayMaxSDKConan(ConanFile):
     name: str = 'vraysdk'

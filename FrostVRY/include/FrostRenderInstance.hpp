@@ -111,6 +111,11 @@ class FrostRenderInstance : public VR::VRenderInstance,
     trace_point_t getShadowPt( const VR::VRayContext& vri ) override;
     vray_vector_t getVelocity( const VR::VRayContext& vri ) override;
 
+#if VRAY_DLL_VERSION >= 0x60000
+    vray_transform_t worldToObjectTransform( const VR::VRayContext& rc ) override;
+    vray_transform_t objectToWorldTransform( const VR::VRayContext& rc ) override;
+#endif
+
     // From GeometryGenerator
     /// Fills in the intersection data for the primitive in rsray.is. for single ray context
     virtual void setIntersectionData( VR::RSRay& rsray, void* isData ) override;
@@ -163,7 +168,7 @@ class FrostRenderInstance : public VR::VRenderInstance,
     FrostInterface* m_frost;
 
     // Transformation of the plane
-    VR::Transform tm, itm;
+    vray_transform_t tm, itm;
 
     Mesh m_dummyMesh; // Dummy 3dsmax mesh
 

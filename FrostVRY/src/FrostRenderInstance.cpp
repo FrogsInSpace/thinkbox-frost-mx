@@ -772,7 +772,7 @@ void FrostRenderInstance::frameBegin( TimeValue t, VRayCore* vray ) {
         objToCam = toMatrix3( vray->getFrameData().worldToCam * toTransform3f( objToWorld ) );
 #endif
 
-        tm = toTransform( objToWorld );
+        tm = vray_transform_t(toTransform( objToWorld ));
         itm = inverse( tm );
 
         mesh = &m_dummyMesh;
@@ -1343,6 +1343,14 @@ vray_vector_t FrostRenderInstance::getVelocity( const VR::VRayContext& vri ) {
     }
 
     return vray_vector_t( 0, 0, 0 );
+}
+
+vray_transform_t FrostRenderInstance::worldToObjectTransform( const VR::VRayContext& rc ) {
+    return itm;
+}
+
+vray_transform_t FrostRenderInstance::objectToWorldTransform( const VR::VRayContext& rc ) {
+    return tm;
 }
 
 vray_vector_t FrostRenderInstance::get_particle_motion_per_exposure( int particleIndex ) {

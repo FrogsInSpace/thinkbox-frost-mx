@@ -100,7 +100,14 @@ int get_human_readable_max_version() {
     return majorVersion;
 }
 
-std::wstring get_vray_dll_name() {
+/// Return the name of the V-Ray DLL.
+/// @param withMaxVersion If true, the version of 3ds Max is appended, i.e. vray2022.dll etc. If false, then
+/// just vray.dll is returned (since V-Ray 6, the name is just vray.dll).
+std::wstring get_vray_dll_name( const bool withMaxVersion ) {
+    if ( !withMaxVersion ) {
+        return L"vray.dll";
+    }
+
     return L"vray" + frantic::strings::to_string_classic<frantic::tstring>( get_human_readable_max_version() ) +
            L".dll";
 }
@@ -172,13 +179,19 @@ BidirectionalIterator find_closest_not_greater_than( BidirectionalIterator first
 } // anonymous namespace
 
 FrostVRayLibrary::ptr_type LoadFrostVRayLibrary() {
-    const std::wstring dll = get_vray_dll_name();
+    std::wstring dll = get_vray_dll_name( true /* with Max version */ ); // First try vrayNNNN.dll
     scoped_hmodule hmodule( LoadLibraryW( dll.c_str() ) );
     if( !hmodule.get() ) {
-        throw std::runtime_error( "LoadFrostVRayLibrary: Unable to load VRay DLL (" +
-                                  frantic::strings::to_string( dll ) + "): \"" +
-                                  frantic::win32::GetLastErrorMessageA() + "\"" );
+        dll = get_vray_dll_name( false /* no Max version */ ); // Try vray.dll only
+
+        hmodule.reset( LoadLibraryW( dll.c_str() ) );
+        if ( !hmodule.get() ) {
+            throw std::runtime_error( "LoadFrostVRayLibrary: Unable to load VRay DLL (" +
+                                      frantic::strings::to_string(dll) + "): \"" +
+                                      frantic::win32::GetLastErrorMessageA() + "\"");
+        }
     }
+
     typedef unsigned int ( *get_vray_revision_t )( void );
     get_vray_revision_t getVRayRevision =
         (get_vray_revision_t)GetProcAddress( hmodule.get(), "?getVRayRevision@VUtils@@YAIXZ" );
