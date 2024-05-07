@@ -24,8 +24,9 @@ SETTINGS: dict[str, Any] = {
 
 # DEFAULT_VRAY_PATH: str = 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}'
 # DEFAULT_VRAY_PATH: str = os.getenv('VRAY_FOR_3DSMAX2024_SDK', 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}')
-DEFAULT_VRAY_PATH: str = os.getenv('VRAY_FOR_3DSMAX2024_SDK', 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}')
-
+ENV_VRAY_SDK: str = 'VRAY_FOR_3DSMAX{}_SDK'
+DEFAULT_VRAY_PATH: str = os.getenv(ENV_VRAY_SDK)
+ 
 class VRayMaxSDKConan(ConanFile):
     name: str = 'vraysdk'
     version: str = '1.0.0'
@@ -39,10 +40,14 @@ class VRayMaxSDKConan(ConanFile):
     def configure(self) -> None:
         if self.options.max_version == None:
             self.options.max_version = '2024'
-
         if self.options.vray_path == None:
-            self.options.vray_path = DEFAULT_VRAY_PATH.format(self.options.max_version)
-
+            self.options.vray_path = os.getenv(ENV_VRAY_SDK.format(self.options.max_version))
+            # self.options.vray_path = DEFAULT_VRAY_PATH.format(self.options.max_version)
+        print ('VraySDK path: ', self.options.vray_path)
+        if self.options.vray_path == None:
+            print ('VraySDK path not found, terminating...', self.options.vray_path)
+            exit()
+        
     def validate(self) -> None:
         compiler = str(self.settings.compiler)
         compiler_version = str(self.settings.compiler.version)
