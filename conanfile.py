@@ -63,7 +63,7 @@ UNUSED_LICENSE_DENYLIST: set[str] = {
 
 class FrostMXConan(ConanFile):
     name: str = 'frostmx'
-    version: str = '2.5.2'
+    version: str = '2.5.3'
     license: str = 'Apache-2.0'
     description: str = 'The Frost Plugin for 3ds Max'
     settings: dict[str, Any] = SETTINGS

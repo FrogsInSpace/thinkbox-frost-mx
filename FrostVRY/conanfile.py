@@ -66,7 +66,7 @@ UNUSED_LICENSE_DENYLIST: set[str] = {
 
 class FrostVRYConan(ConanFile):
     name: str = 'frostvry'
-    version: str = '2.5.2'
+    version: str = '2.5.3'
     license: str = 'Apache-2.0'
     description: str = 'The Frost Plugin for V-Ray'
     settings: dict[str, Any] = SETTINGS
