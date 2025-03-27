@@ -15,6 +15,12 @@ VALID_MAX_CONFIGS: dict[tuple[str, str], set[str]] = {
     ('Visual Studio', '17'): { '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026' }
 }
 
+VALID_VRAY_CONFIGS: dict[str, set[str]] = {
+    '5': { '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024' },
+    '6': { '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025' },
+    '7': { '2020', '2021', '2022', '2023', '2024', '2025' }
+}
+
 SETTINGS: dict[str, Any] = {
     'os': ['Windows'],
     'compiler': {
@@ -47,7 +53,9 @@ NO_LICENSE_ALLOWLIST: set[str] = {
     # We do not distribute OpenGL
     'opengl',
     # We do not distribute CMake
-    'cmake'
+    'cmake',
+    # We do not distribute thinking particles SDK
+    'thinking_particles_light_line_sdk'
 }
 
 UNUSED_LICENSE_DENYLIST: set[str] = {
@@ -74,14 +82,19 @@ class FrostVRYConan(ConanFile):
     tool_requires: list[str] = TOOL_REQUIRES
     generators: str | list[str] = 'cmake_find_package'
     options: dict[str, Any] = {
-        'max_version': ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026']
+        # 'max_version': ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],
+        'max_version': ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],
+        'vray_version': ['5', '6', '7']
     }
 
     def configure(self) -> None:
         if self.options.max_version == None:
-            self.options.max_version = '2022'
+            self.options.max_version = '2024'
+        if self.options.vray_version == None:
+            self.options.vray_version = '7'
         self.options['maxsdk'].max_version = self.options.max_version
         self.options['vraysdk'].max_version = self.options.max_version
+        self.options['vraysdk'].vray_version = self.options.vray_version
         self.options['thinkboxmxlibrary'].max_version = self.options.max_version
 
     def validate(self) -> None:
@@ -89,14 +102,19 @@ class FrostVRYConan(ConanFile):
             raise Exception('Option \'max_version\' must be the same as maxsdk')
         if self.options.max_version != self.options['vraysdk'].max_version:
             raise Exception('Option \'max_version\' must be the same as vraysdk')
+        if self.options.vray_version != self.options['vraysdk'].vray_version:
+            raise Exception('Option \'vray_version\' must be the same as vraysdk')
         if self.options.max_version != self.options['thinkboxmxlibrary'].max_version:
             raise Exception('Option \'max_version\' must be the same as thinkboxmxlibrary')
         compiler = str(self.settings.compiler)
         compiler_version = str(self.settings.compiler.version)
         compiler_tuple = (compiler, compiler_version)
         max_version = str(self.options.max_version)
+        vray_version = str(self.options.vray_version)       
         if max_version not in VALID_MAX_CONFIGS[compiler_tuple]:
             raise Exception(f'{str(compiler_tuple)} is not a valid configuration for 3ds Max {max_version}')
+        if max_version not in VALID_VRAY_CONFIGS[vray_version]:
+            raise Exception(f'{vray_version} is not a valid configuration for 3ds Max {max_version}')
 
     def imports(self) -> None:
         self.copy('license*', dst='licenses', folder=True, ignore_case=True)
@@ -110,7 +128,6 @@ class FrostVRYConan(ConanFile):
         version_gen.write_version_hash(self.version, self.source_folder, os.path.join(self.source_folder, 'FrostVersionHash.hpp'))
         vray_version = version_gen.read_vray_version(os.path.join(self.build_folder, 'include', 'vraybase_ver.h'))
         shutil.copyfile('attributions.txt', os.path.join(self.source_folder, 'third_party_licenses.txt'))
-
         cmake = CMake(self)
         cmake.configure(defs={
             'MAX_VERSION': self.options.max_version,

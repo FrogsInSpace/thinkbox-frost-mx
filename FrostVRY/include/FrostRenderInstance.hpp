@@ -111,7 +111,7 @@ class FrostRenderInstance : public VR::VRenderInstance,
     trace_point_t getShadowPt( const VR::VRayContext& vri ) override;
     vray_vector_t getVelocity( const VR::VRayContext& vri ) override;
 
-#if VRAY_DLL_VERSION >= 0x60000
+#if VRAY_DLL_VERSION >= 0x50000
     vray_transform_t worldToObjectTransform( const VR::VRayContext& rc ) override;
     vray_transform_t objectToWorldTransform( const VR::VRayContext& rc ) override;
 #endif

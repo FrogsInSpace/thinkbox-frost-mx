@@ -25,8 +25,11 @@ class FrostVRenderObject : public VUtils::VRenderObject {
     FrostVRenderObject( FrostInterface* frost );
 
     // From VRenderObject
+#if VRAY_DLL_VERSION < 0x70000
     VUtils::VRenderInstance* newRenderInstance( INode* node, VUtils::VRayCore* vray, int renderID );
-
+#else
+    VUtils::VRenderInstance* newRenderInstance( INode* node, VUtils::VRayCore* vray, int renderID, VUtils::BulkAllocatorInterface *bulkAllocator=nullptr );
+#endif
     void deleteRenderInstance( VUtils::VRenderInstance* ri );
 
     void frameBegin( TimeValue t, VUtils::VRayCore* vray );

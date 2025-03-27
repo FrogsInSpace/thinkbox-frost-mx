@@ -11,7 +11,12 @@
 FrostVRenderObject::FrostVRenderObject( FrostInterface* frost )
     : m_frost( frost ) {}
 
-VUtils::VRenderInstance* FrostVRenderObject::newRenderInstance( INode* node, VUtils::VRayCore* vray, int renderID ) {
+#if VRAY_DLL_VERSION < 0x70000
+VUtils::VRenderInstance* FrostVRenderObject::newRenderInstance( INode* node, VUtils::VRayCore* vray, int renderID ) 
+#else
+VUtils::VRenderInstance* FrostVRenderObject::newRenderInstance( INode* node, VUtils::VRayCore* vray, int renderID, VUtils::BulkAllocatorInterface *bulkAllocator ) 
+#endif
+{
     try {
         return new FrostRenderInstance( m_frost, this, node, vray, renderID );
     } catch( const std::exception& e ) {

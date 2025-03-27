@@ -1,5 +1,8 @@
 -- Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 -- SPDX-License-Identifier: Apache-2.0
+
+-- dont create menus for 3ds Max 2025 and up
+if((maxVersion())[1] < 27000) then
 (
 	local CurrentVersion = "20160908"
 	makeDir (GetDir #plugcfg + "\\Frost\\") all:true
@@ -93,4 +96,6 @@
 		menuMan.updateMenuBar() 
 		setIniSetting (GetDir #plugcfg + "\\Frost\\FrostPreferences.ini" ) "MenuSystem" "LastVersion" CurrentVersion
 	)--end if
-)--end script
+)
+else print "--FrostMenuCreator script skipped..."
+--end script

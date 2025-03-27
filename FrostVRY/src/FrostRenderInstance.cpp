@@ -739,8 +739,11 @@ void FrostRenderInstance::enumParticles( TimeValue t, VR::VRayCore* vray, VR::VR
             VUtils::MeshInterface* meshInterface = m_shapes[m_shapeIndices[i]].meshInterface.get();
             VUtils::ThreadManager* threadManager = vray->getSequenceData().threadManager;
             float mbDuration = vray->getSequenceData().params.moblur.duration;
-
+#if VRAY_DLL_VERSION < 0x70000
             m_movingPrimitives[i].init( meshInterface, 2, tms, threadManager, this, mbDuration );
+#else
+            m_movingPrimitives[i].init( meshInterface, 2, tms, threadManager, this, mbDuration, nullptr );
+#endif
         }
     } else {
         m_staticPrimitives.reset( new static_primitive_t[transforms.size()] );
@@ -748,8 +751,11 @@ void FrostRenderInstance::enumParticles( TimeValue t, VR::VRayCore* vray, VR::VR
         for( size_t i = 0; i < transforms.size(); ++i ) {
             VUtils::MeshInterface* meshInterface = m_shapes[m_shapeIndices[i]].meshInterface.get();
             VUtils::ThreadManager* threadManager = vray->getSequenceData().threadManager;
-
-            m_staticPrimitives[i].init( meshInterface, trace_transform_t( transforms[i] ), threadManager, this );
+#if VRAY_DLL_VERSION < 0x70000
+            m_staticPrimitives[i].init( meshInterface, trace_transform_t( transforms[i] ), threadManager, this);
+#else
+            m_staticPrimitives[i].init( meshInterface, trace_transform_t( transforms[i] ), threadManager, this, nullptr );
+#endif
         }
     }
 }

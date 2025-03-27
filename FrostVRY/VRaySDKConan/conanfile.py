@@ -10,7 +10,13 @@ import shutil
 VALID_MAX_CONFIGS: dict[tuple[str, str], set[str]] = {
     ('Visual Studio', '15'): { '2017', '2018', '2019', '2020', '2021', '2022' },
     ('Visual Studio', '16'): { '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024' },
-    ('Visual Studio', '17'): { '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026' },
+    ('Visual Studio', '17'): { '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027' },
+}
+
+VALID_VRAY_CONFIGS: dict[str, set[str]] = {
+    '5': { '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024' },
+    '6': { '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025' },
+    '7': { '2020', '2021', '2022', '2023', '2024', '2025' },
 }
 
 SETTINGS: dict[str, Any] = {
@@ -24,8 +30,8 @@ SETTINGS: dict[str, Any] = {
 
 # DEFAULT_VRAY_PATH: str = 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}'
 # DEFAULT_VRAY_PATH: str = os.getenv('VRAY_FOR_3DSMAX2024_SDK', 'C:/Program Files/Chaos Group/V-Ray/3ds Max {}')
-ENV_VRAY_SDK: str = 'VRAY_FOR_3DSMAX{}_SDK'
-DEFAULT_VRAY_PATH: str = os.getenv(ENV_VRAY_SDK)
+CHAOSGROUP_SDK_ROOT: str = os.getenv('CHAOSGROUP_SDK_ROOT', 'F:/_SDKs/3dsMax/ChaosGroup/' )
+VRAY_SDK_PATH: str = CHAOSGROUP_SDK_ROOT +  '/Vray{}/3dsMax{}'
  
 class VRayMaxSDKConan(ConanFile):
     name: str = 'vraysdk'
@@ -33,15 +39,18 @@ class VRayMaxSDKConan(ConanFile):
     description: str = 'A Conan package containing the Chaos Group V-Ray SDK.'
     settings: dict[str, Any] = SETTINGS
     options: dict[str, Any] = {
-        'max_version': ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],
+        'max_version': ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027'],
+        'vray_version': ['5','6','7'],
         'vray_path': 'ANY'
     }
 
     def configure(self) -> None:
         if self.options.max_version == None:
             self.options.max_version = '2024'
+        if self.options.vray_version == None:
+            self.options.vray_version = '5'
         if self.options.vray_path == None:
-            self.options.vray_path = os.getenv(ENV_VRAY_SDK.format(self.options.max_version))
+            self.options.vray_path = VRAY_SDK_PATH.format(self.options.vray_version, self.options.max_version)
             # self.options.vray_path = DEFAULT_VRAY_PATH.format(self.options.max_version)
         print ('VraySDK path: ', self.options.vray_path)
         if self.options.vray_path == None:
@@ -53,8 +62,11 @@ class VRayMaxSDKConan(ConanFile):
         compiler_version = str(self.settings.compiler.version)
         compiler_tuple = (compiler, compiler_version)
         max_version = str(self.options.max_version)
+        vray_version = str(self.options.vray_version)
         if max_version not in VALID_MAX_CONFIGS[compiler_tuple]:
             raise Exception(f'{str(compiler_tuple)} is not a valid configuration for 3ds Max {max_version}')
+        if max_version not in VALID_VRAY_CONFIGS[vray_version]:
+            raise Exception(f'{vray_version} is not a valid major Vray version for 3ds Max {max_version}')
 
     def build(self) -> None:
         # Copy Headers

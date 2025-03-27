@@ -14,6 +14,12 @@ VALID_MAX_CONFIGS: dict[tuple[str, str], set[str]] = {
     ('Visual Studio', '17'): { '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026' }
 }
 
+VALID_VRAY_CONFIGS: dict[str, set[str]] = {
+    '5': { '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024' },
+    '6': { '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025' },
+    '7': { '2020', '2021', '2022', '2023', '2024', '2025' }
+}
+
 COMMON_PACKAGER_ARGS: dict[str, Any] = {
     'build_types': ['Release'],
     'archs': ['x86_64'],
@@ -21,7 +27,7 @@ COMMON_PACKAGER_ARGS: dict[str, Any] = {
 }
 
 WINDOWS_PACKAGER_ARGS: dict[str, Any] = {
-    'visual_versions': ['15', '16', '17'],
+    'visual_versions': ['17'],
     'visual_runtimes': ['MD']
 }
 
@@ -50,12 +56,11 @@ def main() -> None:
 
     builder = ConanMultiPackager(**packager_args)
     builder.add_common_builds(build_all_options_values=[
-        'max_version'
+        'max_version',
+        'vray_version'
     ], pure_c=False)
     builder.remove_build_if(
-        lambda build: build.options['frostvry:max_version'] not in VALID_MAX_CONFIGS[
-            (build.settings['compiler'], build.settings['compiler.version'])
-            ])
+        lambda build: build.options['frostvry:max_version'] not in VALID_VRAY_CONFIGS[build.options['frostvry:vray_version']])
 
     if args.dry_run:
         pprint.pprint(builder.builds, indent=4)
