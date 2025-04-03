@@ -20,7 +20,7 @@ add_library( frostmx SHARED )
 
 set_property( TARGET frostmx PROPERTY CXX_STANDARD 17 )
 
-set_target_properties( frostmx PROPERTIES OUTPUT_NAME "Frost" )
+set_target_properties( frostmx PROPERTIES OUTPUT_NAME "Frost_${MAX_VERSION}" )
 set_target_properties( frostmx PROPERTIES PREFIX "" )
 set_target_properties( frostmx PROPERTIES SUFFIX ".dlo" )
 
