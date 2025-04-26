@@ -704,13 +704,15 @@ class Frost : public SimpleObject2,
     // IParamArray *GetParamBlock();
     // int GetParamBlockIndex( int id );
     CreateMouseCallBack* GetCreateMouseCallBack();
-#if MAX_VERSION_MAJOR >= 24
-    const MCHAR* GetObjectName( bool localized );
-#elif MAX_VERSION_MAJOR >= 15
-    const MCHAR* GetObjectName();
-#else
+
+#if MAX_VERSION_MAJOR < 15
     MCHAR* GetObjectName();
+#elif MAX_VERSION_MAJOR < 24
+    const MCHAR* GetObjectName();
+#else 
+    const MCHAR* GetObjectName( bool localized );
 #endif
+
     BOOL HasViewDependentBoundingBox();
 
 #if MAX_VERSION_MAJOR >= 17
@@ -778,8 +780,7 @@ class Frost : public SimpleObject2,
     // RefTargetHandle GetReference( int i );
     // void SetReference( int i, RefTargetHandle rtarg );
 #if MAX_VERSION_MAJOR >= 17
-    RefResult NotifyRefChanged( const Interval& changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message,
-                                BOOL propagate );
+    RefResult NotifyRefChanged( const Interval& changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message, BOOL propagate );
 #else
     RefResult NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message );
 #endif

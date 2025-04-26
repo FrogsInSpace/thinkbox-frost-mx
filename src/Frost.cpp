@@ -1159,15 +1159,13 @@ CreateMouseCallBack* Frost::GetCreateMouseCallBack() {
     return &gCreateMouseCB;
 }
 
-#if MAX_VERSION_MAJOR >= 24
-const MCHAR* Frost::GetObjectName( bool localized ) {
-#elif MAX_VERSION_MAJOR >= 15
-const MCHAR* Frost::GetObjectName() {
-#else
-MCHAR* Frost::GetObjectName() {
+#if MAX_VERSION_MAJOR < 15
+MCHAR* Frost::GetObjectName() { return Frost_DISPLAY_NAME; }
+#elif MAX_VERSION_MAJOR < 24
+const MCHAR* Frost::GetObjectName() { return Frost_DISPLAY_NAME; }
+#else 
+const MCHAR* Frost::GetObjectName(bool localized) { return Frost_DISPLAY_NAME; }
 #endif
-    return Frost_DISPLAY_NAME;
-}
 
 BOOL Frost::HasViewDependentBoundingBox() { return TRUE; }
 
@@ -1420,13 +1418,14 @@ void Frost::FreeCaches() {
 }
 
 #if MAX_VERSION_MAJOR >= 24
-void Frost::GetClassName( MSTR& s, bool localized )
-#else
-void Frost::GetClassName( MSTR& s )
-#endif
-{
+void Frost::GetClassName( MSTR& s, bool localized ) {
     s = Frost_CLASS_NAME;
 }
+#else
+void Frost::GetClassName( MSTR& s ) {
+    s = Frost_CLASS_NAME;
+}
+#endif
 
 void* Frost::GetInterface( ULONG id ) {
     if( id == I_VRAYGEOMETRY ) {
@@ -1571,8 +1570,7 @@ IParamBlock2* Frost::GetParamBlockByID( short id ) {
 // from ref
 
 #if MAX_VERSION_MAJOR >= 17
-RefResult Frost::NotifyRefChanged( const Interval& changeInt, RefTargetHandle hTarget, PartID& partID,
-                                   RefMessage message, BOOL propagate ) {
+RefResult Frost::NotifyRefChanged( const Interval& changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message, BOOL propagate ) {
 #else
 RefResult Frost::NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message ) {
 #endif
