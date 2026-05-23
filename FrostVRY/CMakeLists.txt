@@ -8,9 +8,9 @@ find_package( thinkboxcmlibrary REQUIRED )
 include( PrecompiledHeader )
 include( ThinkboxCMLibrary )
 
-set( SUPPORTED_MAX_VERSIONS 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 )
+set( SUPPORTED_MAX_VERSIONS 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 2028)
 
-option( MAX_VERSION "The version of the 3ds Max SDK to build the library against." 2024 )
+option( MAX_VERSION "The version of the 3ds Max SDK to build the library against." 2026 )
 
 if( NOT MAX_VERSION IN_LIST SUPPORTED_MAX_VERSIONS )
   message( FATAL_ERROR "ERROR: Cannot build for unsupported 3ds Max version ${MAX_VERSION}" )
@@ -32,6 +32,7 @@ set_target_properties( frostvry PROPERTIES SUFFIX ".dll" )
 
 target_include_directories( frostvry PUBLIC
                             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
                             $<INSTALL_INTERFACE:include> )
 
 target_include_directories( frostvry PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
