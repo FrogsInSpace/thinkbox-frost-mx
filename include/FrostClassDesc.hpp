@@ -9,7 +9,7 @@ class FrostClassDesc : public ClassDesc2 {
     int IsPublic() { return TRUE; }
     void* Create( BOOL loading ) { return new Frost( loading == TRUE, loading ? FALSE : TRUE ); }
     const TCHAR* ClassName() { return Frost_CLASS_NAME; }
-#if MAX_VERSION_MAJOR >= 24
+#ifdef MAX_RELEASE_R24
     const TCHAR* NonLocalizedClassName() { return Frost_CLASS_NAME; }
 #endif
     SClass_ID SuperClassID() { return GEOMOBJECT_CLASS_ID; }

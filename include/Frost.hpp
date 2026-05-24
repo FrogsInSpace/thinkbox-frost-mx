@@ -710,7 +710,7 @@ class Frost : public SimpleObject2,
 #elif MAX_VERSION_MAJOR < 24
     const MCHAR* GetObjectName();
 #else 
-    const MCHAR* GetObjectName( bool localized );
+    const MCHAR* GetObjectName( bool localized ) const override;
 #endif
 
     BOOL HasViewDependentBoundingBox();

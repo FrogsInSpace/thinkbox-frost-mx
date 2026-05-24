@@ -1164,7 +1164,11 @@ MCHAR* Frost::GetObjectName() { return Frost_DISPLAY_NAME; }
 #elif MAX_VERSION_MAJOR < 24
 const MCHAR* Frost::GetObjectName() { return Frost_DISPLAY_NAME; }
 #else 
-const MCHAR* Frost::GetObjectName(bool localized) { return Frost_DISPLAY_NAME; }
+const MCHAR* Frost::GetObjectName(bool localized) const 
+{ 
+    UNUSED_PARAM(localized);
+    return Frost_DISPLAY_NAME; 
+}
 #endif
 
 BOOL Frost::HasViewDependentBoundingBox() { return TRUE; }
