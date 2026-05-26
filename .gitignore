@@ -2,6 +2,15 @@ build/
 vcproject/
 *.rsp
 
+#auto-generated 
+third_party_licenses.txt
+FrostMXVersion.h
+FrostMXVersion.rc
+FrostVersion.h
+FrostVersion.rc
+FrostVersionHash.hpp
+FrostVRY/Include/FrostInterface.hpp
+
 # Conan 1.x generated files
 conanbuildinfo.*
 conaninfo.txt
