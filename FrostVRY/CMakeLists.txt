@@ -10,7 +10,7 @@ include( ThinkboxCMLibrary )
 
 set( SUPPORTED_MAX_VERSIONS 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 2028)
 
-option( MAX_VERSION "The version of the 3ds Max SDK to build the library against." 2026 )
+option( MAX_VERSION "The version of the 3ds Max SDK to build the library against." 2027 )
 
 if( NOT MAX_VERSION IN_LIST SUPPORTED_MAX_VERSIONS )
   message( FATAL_ERROR "ERROR: Cannot build for unsupported 3ds Max version ${MAX_VERSION}" )
@@ -29,6 +29,18 @@ set_property( TARGET frostvry PROPERTY CXX_STANDARD 17 )
 set_target_properties( frostvry PROPERTIES OUTPUT_NAME "Frost_vray${VRAY_VERSION}_max${MAX_VERSION}" )
 set_target_properties( frostvry PROPERTIES PREFIX "" )
 set_target_properties( frostvry PROPERTIES SUFFIX ".dll" )
+
+# copy to installer staging area if the env variable is set
+if(DEFINED ENV{PACKAGING_FOLDER} AND NOT "$ENV{PACKAGING_FOLDER}" STREQUAL "")
+    set(STAGING_DIR "$ENV{PACKAGING_FOLDER}/Frost/Thinkbox_FrostMX_${MAX_VERSION}/Contents/plugin" )
+    add_custom_command(
+        TARGET frostvry
+        POST_BUILD
+		# only when we are in release build
+        COMMAND $<$<CONFIG:Release>:${CMAKE_COMMAND}> -E make_directory "${STAGING_DIR}"
+        COMMAND $<$<CONFIG:Release>:${CMAKE_COMMAND}> -E copy_if_different "$<TARGET_FILE:frostvry>" "${STAGING_DIR}/"
+    )
+endif()
 
 target_include_directories( frostvry PUBLIC
                             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -61,12 +73,15 @@ add_precompiled_header( frostvry stdafx.h SOURCE_CXX stdafx.cpp )
 # The Conan version of Boost was built with this, and it changes the library names.
 # As a result, we need to set this to tell Boost to look for the right libraries to
 # link against.
-target_compile_definitions( frostvry PUBLIC BOOST_AUTO_LINK_SYSTEM )
+target_compile_definitions( frostvry PUBLIC BOOST_AUTO_LINK_SYSTEM)
 
 # This varible must be defined as in VRAY 5 they are developing mulitple DR modes.
 # In VRay 5.2x this is defined. In VRay 5.0x and 5.1x this is undefined and in 5.1x it is required.
 # When DR2 is fully available this should be revisited.
 target_compile_definitions(frostvry PRIVATE WITH_DR1)
+
+# with latest vray sdks, vutils_intrinsics.h fails to detect correct architecture ( #error:  "Unsupported architecture or compiler!" )
+target_compile_definitions(frostvry PRIVATE  __SSE__)
 
 find_package( thinkboxlibrary REQUIRED )
 find_package( thinkboxmxlibrary REQUIRED )

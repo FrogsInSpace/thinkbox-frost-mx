@@ -10,8 +10,6 @@ import shutil
 import version_gen
 
 VALID_MAX_CONFIGS: dict[tuple[str, str], set[str]] = {
-    ('Visual Studio', '15'): { '2017', '2018', '2019', '2020', '2021', '2022' },
-    ('Visual Studio', '16'): { '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024' },
     ('Visual Studio', '17'): { '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026' ,'2027' }
 }
 
@@ -24,7 +22,7 @@ VALID_VRAY_CONFIGS: dict[str, set[str]] = {
 SETTINGS: dict[str, Any] = {
     'os': ['Windows'],
     'compiler': {
-        'Visual Studio': {'version': ['15', '16', '17']},
+        'Visual Studio': {'version': ['17']},
     },
     'build_type': None,
     'arch': 'x86_64'
@@ -74,7 +72,7 @@ UNUSED_LICENSE_DENYLIST: set[str] = {
 
 class FrostVRYConan(ConanFile):
     name: str = 'frostvry'
-    version: str = '2.5.3'
+    version: str = '2.6.0'
     license: str = 'Apache-2.0'
     description: str = 'The Frost Plugin for V-Ray'
     settings: dict[str, Any] = SETTINGS
@@ -82,14 +80,13 @@ class FrostVRYConan(ConanFile):
     tool_requires: list[str] = TOOL_REQUIRES
     generators: str | list[str] = 'cmake_find_package'
     options: dict[str, Any] = {
-        # 'max_version': ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],
-        'max_version': ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028'],
+        'max_version': ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027'],
         'vray_version': ['5', '6', '7']
     }
 
     def configure(self) -> None:
         if self.options.max_version == None:
-            self.options.max_version = '2024'
+            self.options.max_version = '2027'
         if self.options.vray_version == None:
             self.options.vray_version = '7'
         self.options['maxsdk'].max_version = self.options.max_version
@@ -114,12 +111,14 @@ class FrostVRYConan(ConanFile):
         if max_version not in VALID_MAX_CONFIGS[compiler_tuple]:
             raise Exception(f'{str(compiler_tuple)} is not a valid configuration for 3ds Max {max_version}')
         if max_version not in VALID_VRAY_CONFIGS[vray_version]:
-            raise Exception(f'{vray_version} is not a valid configuration for 3ds Max {max_version}')
-
+            self.output.info(f"Skipping invalid config: V-Ray {vray_version} with 3ds Max {max_version}")
+            return
+    
     def imports(self) -> None:
         self.copy('license*', dst='licenses', folder=True, ignore_case=True)
         self.generate_attributions_doc()
         self.copy("*vraybase_ver.h", dst='')
+        self.copy("*.dll", dst="bin", src="bin")
 
                 
     def build(self) -> None:
